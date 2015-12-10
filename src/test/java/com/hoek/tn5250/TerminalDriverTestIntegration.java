@@ -31,7 +31,7 @@ public class TerminalDriverTestIntegration {
 	}
 
 	@Test
-	public void should_connect_with_pub1() throws InterruptedException {
+	public void loginCommandSignOffTest() throws InterruptedException {
 		driver.connect();
 		assertTrue(driver.isConnected());
 		driver.fillFieldWith("Benutzer", username);
