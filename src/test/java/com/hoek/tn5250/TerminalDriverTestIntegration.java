@@ -1,44 +1,53 @@
 package com.hoek.tn5250;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.tn5250j.TN5250jConstants;
 
 public class TerminalDriverTestIntegration {
 
-    private String username;
+	private TerminalDriver driver;
+	private String username;
     private String password;
 
-    @Before
-    public void setup() {
-        username = System.getProperty("username");
+	@Before
+	public void setup() {
+		driver = new TerminalDriver("SIDEV", "23", "1141");
+		username = System.getProperty("username");
         password = System.getProperty("password");
         assertNotNull("-Dusername= not specified", username);
         assertNotNull("-Dpassword= not specified", password);
-    }
+	}
 
-    @Test
-    public void should_connect_with_pub1() throws InterruptedException {
-//        TerminalDriver driver = new TerminalDriver("localhost", "2023").connect();
-        TerminalDriver driver = new TerminalDriver("pub1.rzkh.de", "23").connect();
-        assertTrue(driver.isConnected());
-        driver.fillFieldWith("Benutzer", username);
-        driver.fillFieldWith("Password", password);
-        driver.sendEnter();
-        driver.assertScreen("Sign-on Information");
-        driver.sendEnter();
-        driver.assertScreen("GUEST menu");
-        driver.sendCommand("WRKQRY");
-        driver.fillFieldWith("Option", "1").sendEnter();
-        driver.sendEnter();
-        driver.fillFieldWith("File", "BLA").sendEnter().sendEnter();
-        driver.select("Define result fields", "1").sendEnter();
-        driver.sendKeys("[pf5]").waitForUnlock();
-        driver.fillFieldWith("Shift to column", "20").sendEnter();
-        assertEquals("000022\u0000  /* LAST CALL */", driver.lastReportLine());
-    }
+	@After
+	public void teardown() {
+		if (driver != null) {
+			driver.disconnect();
+		}
+	}
+
+	@Test
+	public void should_connect_with_pub1() throws InterruptedException {
+		driver.connect();
+		assertTrue(driver.isConnected());
+		driver.fillFieldWith("Benutzer", username);
+		driver.fillFieldWith("Kennwort", password);
+		driver.sendEnter();
+		driver.assertScreen("MAIN");
+		driver.sendCommand("LKW");
+		driver.sendEnter();
+		driver.dumpScreen();
+		assertTrue(driver.getScreenContent().getLine(2).contains("Einstiegsschirm"));
+		char[] color = driver.getScreenContent().getScreen().getData(1, 1, 1, 2, TN5250jConstants.PLANE_COLOR);
+		char[] attribute = driver.getScreenContent().getScreen().getData(1, 1, 1, 2, TN5250jConstants.PLANE_ATTR);
+		System.out.println(new String(color));
+		System.out.println(new String(attribute));
+		driver.sendKeys("[pf12]");
+		driver.sendCommand("SIGNOFF");
+		driver.disconnect();
+	}
 }

@@ -5,3 +5,6 @@ target/
 velocity.log
 src/test/resources/FitNesseRoot/ErrorLogs/
 src/test/resources/FitNesseRoot/files/
+/.settings/
+/.classpath
+/.project

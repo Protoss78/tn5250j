@@ -27,7 +27,28 @@ public class ScreenContent {
         }
     }
 
-    public List<String> getLines() {
+    /**
+	 * @return the screen
+	 */
+	public Screen5250 getScreen() {
+		return screen;
+	}
+
+	/**
+	 * @return the chars
+	 */
+	public char[] getChars() {
+		return chars;
+	}
+
+	/**
+	 * @return the contents
+	 */
+	public String getContents() {
+		return contents;
+	}
+
+	public List<String> getLines() {
         List<String> lines = new ArrayList<String>(screen.getRows());
         for (int row = 0; row < screen.getRows(); row++) {
             lines.add(getLine(row));

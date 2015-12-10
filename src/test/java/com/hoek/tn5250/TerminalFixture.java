@@ -1,13 +1,11 @@
 package com.hoek.tn5250;
 
-import org.apache.commons.lang.StringUtils;
-
 public class TerminalFixture {
 
     private final TerminalDriver driver;
 
     public TerminalFixture(String host, String port) {
-        driver = new TerminalDriver(host, port);
+        driver = new TerminalDriver(host, port, "37");
     }
 
     public boolean connect() throws InterruptedException {
